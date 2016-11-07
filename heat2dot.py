@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/python3
 # Reads json or yaml from stdin
 # Interprets structure as heat template
 # Generates dot graph from heat template

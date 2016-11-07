@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/python3
 # small server to serve heat2dot conversion and output as svg
 
 import subprocess
@@ -74,5 +74,5 @@ def convert():
         return "<html><head><title>heat2dot</title></head><body>Something went horribly wrong.</body></html>"
 
 if __name__ == '__main__':
-    app.run(port=PORT)
+    app.run(host="0.0.0.0",port=PORT)
 

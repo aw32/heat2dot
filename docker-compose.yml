@@ -1,0 +1,6 @@
+version: '2'
+services:
+    heat2dot:
+        build: .
+        ports:
+         - "1111:1111"
