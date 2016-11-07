@@ -144,7 +144,7 @@ if jsonFile == False:
 
 if jsonFile == False and yamlFile == False:
     eprint("Parsing unsuccessful")
-    exit()
+    exit(1)
 
 if jsonFile == True:
     eprint("Parsed as JSON")
@@ -157,7 +157,7 @@ if "heat_template_version" in textobj:
 
 if not "resources" in textobj:
     eprint("Failed to find resources array")
-    exit()
+    exit(1)
 
 # sort resources according to resource type
 
