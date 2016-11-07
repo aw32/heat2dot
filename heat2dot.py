@@ -141,6 +141,8 @@ if jsonFile == False:
         eprint("YAML parse failure")
         eprint(e)
         yamlFile = False
+else:
+    yamlFile = False
 
 if jsonFile == False and yamlFile == False:
     eprint("Parsing unsuccessful")
@@ -174,6 +176,9 @@ others = {}
 
 for resourceName in resources:
     obj = resources[resourceName]
+    if "resourceName" in obj:
+        eprint("Did not expect that resourceName is a resource attribute.")
+    obj["resourceName"] = resourceName
     if "type" not in obj:
         withouttype += 1
         continue
@@ -376,6 +381,14 @@ for idx,jsonRouter in enumerate(routers):
 
 for idx,jsonRouterInterface in enumerate(routerinterfaces):
     routerInterface = RouterInterface(idx,longName="ri"+str(idx),shortName="ri"+str(idx))
+    routerInterface.longName = jsonRouterInterface["resourceName"]
+    routerInterface.shortName = routerInterface.longName.split(":")
+    if len(routerInterface.shortName)<2:
+        eprint("Unexpected resource name of OS::Neutron::RouterInterface object.")
+        eprint("  use long name: ",routerInterface.longName)
+        routerInterface.shortName = routerInterface.longName
+    else:
+        routerInterface.shortName = routerInterface.shortName[0]+":"+routerInterface.shortName[1]
     if "properties" not in jsonRouterInterface:
         eprint("missing properties in OS::Neutron::RouterInterface object")
         routerInterface.broken = True
@@ -463,10 +476,10 @@ for idx,floating in enumerate(dotFloatings):
 
 # connect ports to nets
 for idx,port in enumerate(dotPorts):
-    print("port"+str(idx),"--","net"+str(port.netIdx))
+    print("port"+str(idx),"--","net"+str(port.netIdx)+";")
 # connect subnets to nets
 for idx,subnet in enumerate(dotSubnets):
-    print("subnet"+str(idx),"--","net"+str(subnet.netIdx))
+    print("subnet"+str(idx),"--","net"+str(subnet.netIdx)+";")
 # connect router interfaces to subnets and routers
 for idx,routerInterface in enumerate(dotRouterinterfaces):
     print("subnet"+str(routerInterface.subnetIdx),"--","routerInterface"+str(idx)+";")
