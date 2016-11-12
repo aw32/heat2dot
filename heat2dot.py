@@ -236,32 +236,32 @@ for idx,jsonServer in enumerate(servers):
     server = Server(idx,longName="server"+str(idx),shortName="server"+str(idx))
     # check available attributes
     if "properties" not in jsonServer:
-        eprint("missing properties in OS::Nova::Server object")
+        eprint("missing properties in OS::Nova::Server object",str(jsonServer["resourceName"]))
         server.broken = True
     else:
         if "name" not in jsonServer["properties"]:
-            eprint("missing name in OS::Nova::Server object")
+            eprint("missing name in OS::Nova::Server object",str(jsonServer["resourceName"]))
             server.broken = True
         else:
             server.longName = jsonServer["properties"]["name"]
             server.shortName = jsonServer["properties"]["name"].split(":")[0]
 
         if "networks" not in jsonServer["properties"]:
-            eprint("missing networks in OS::Nova::Server object")
+            eprint("missing networks in OS::Nova::Server object",str(jsonServer["resourceName"]))
             server.broken = True
         else:
             networks = jsonServer["properties"]["networks"]
             for net in networks:
                 if "port" not in net:
-                    eprint("missing port in networks in OS::Nova::Server object")
+                    eprint("missing port in networks in OS::Nova::Server object",str(jsonServer["resourceName"]))
                     server.broken = True
                 elif "get_resource" not in net["port"]:
-                    eprint("missing get_resource in port in networks in OS::Nova::Server object")
+                    eprint("missing get_resource in port in networks in OS::Nova::Server object",str(jsonServer["resourceName"]))
                     server.broken = True
                 else:
                     portIdx = findPortIdxByName(ports,net["port"]["get_resource"])
                     if portIdx == None:
-                        eprint("Port",net["port"]["get_resource"],"for OS::Nova::Server object",server.shortName,"not found")
+                        eprint("Port",net["port"]["get_resource"],"for OS::Nova::Server object not found",str(jsonServer["resourceName"]))
                         server.broken = True
                     server.portIdx.append(portIdx)
     dotServers.append(server)    
@@ -269,49 +269,49 @@ for idx,jsonServer in enumerate(servers):
 for idx,jsonPort in enumerate(ports):
     port = Port(idx,longName="port"+str(idx),shortName="port"+str(idx))
     if "properties" not in jsonPort:
-        eprint("missing properties in OS::Neutron::Port object")
+        eprint("missing properties in OS::Neutron::Port object",str(jsonPort["resourceName"]))
         port.broken = True
     else:
         if "name" not in jsonPort["properties"]:
-            eprint("missing name in OS::Neutron::Port object")
+            eprint("missing name in OS::Neutron::Port object",str(jsonPort["resourceName"]))
             port.broken = True
         else:
             port.longName = jsonPort["properties"]["name"]
             port.shortName = jsonPort["properties"]["name"].split(":")
             if len(port.shortName)<3:
-                eprint("Name of OS::Neutron::Port object unexpected")
+                eprint("Name of OS::Neutron::Port object unexpected",str(jsonPort["resourceName"]))
                 eprint("  use full name instead:",port.longName)
                 port.shortName = port.longName
             else:
                 port.shortName = port.shortName[0]+":"+port.shortName[1]+":"+port.shortName[2]
     
         if "network" not in jsonPort["properties"]:
-            eprint("missing network in OS::Neutron::Port object")
+            eprint("missing network in OS::Neutron::Port object",str(jsonPort["resourceName"]))
             port.broken = True
         elif "get_resource" not in jsonPort["properties"]["network"]:
-            eprint("missing get_resource in network in OS::Neutron::Port object")
+            eprint("missing get_resource in network in OS::Neutron::Port object",str(jsonPort["resourceName"]))
             port.broken = True
         else:
             port.netIdx = findNetIdxByName(nets,jsonPort["properties"]["network"]["get_resource"])
             if port.netIdx == None:
-                eprint("Net",jsonPort["properties"]["network"]["get_resource"],"for OS::Neutron::Port object",port.shortName,"not found")
+                eprint("Net",jsonPort["properties"]["network"]["get_resource"],"for OS::Neutron::Port object",port.shortName,"not found",str(jsonPort["resourceName"]))
                 port.broken = True
     dotPorts.append(port)
 
 for idx,jsonNet in enumerate(nets):
     net = Net(idx,longName="net"+str(idx),shortName="net"+str(idx))
     if "properties" not in jsonNet:
-        eprint("missing properties in OS::Neutron::Net object")
+        eprint("missing properties in OS::Neutron::Net object",str(jsonNet["resourceName"]))
         net.broken = True
     else:
         if "name" not in jsonNet["properties"]:
-            eprint("missing name in OS::Neutron::Net object")
+            eprint("missing name in OS::Neutron::Net object",str(jsonNet["resourceName"]))
             net.broken = True
         else:
             net.longName = jsonNet["properties"]["name"]
             net.shortName =net.longName.split(":")
             if len(net.shortName)<2:
-                eprint("Name of OS::Neutron::Net object unexpected")
+                eprint("Name of OS::Neutron::Net object unexpected",str(jsonNet["resourceName"]))
                 eprint("  use full name instead:",net.longName)
                 net.shortName = net.longName
             else:
@@ -321,58 +321,58 @@ for idx,jsonNet in enumerate(nets):
 for idx,jsonSubnet in enumerate(subnets):
     subnet = Subnet(idx,longName="subnet"+str(idx),shortName="subnet"+str(idx))
     if "properties" not in jsonSubnet:
-        eprint("missing properties in OS::Neutron::Subnet object")
+        eprint("missing properties in OS::Neutron::Subnet object",str(jsonSubnet["resourceName"]))
         subnet.broken = True
     else:
         if "name" not in jsonSubnet["properties"]:
-            eprint("missing name in OS::Neutron::Subnet object")
+            eprint("missing name in OS::Neutron::Subnet object",str(jsonSubnet["resourceName"]))
             subnet.broken = True
         else:
             subnet.longName = jsonSubnet["properties"]["name"]
             subnet.shortName = subnet.longName.split(":")
             if len(subnet.shortName)<2:
-                eprint("Name of OS::Neutron::Subnet object unexpected")
+                eprint("Name of OS::Neutron::Subnet object unexpected",str(jsonSubnet["resourceName"]))
                 eprint("  use full name instead:",subnet.longName)
                 subnet.shortName = subnet.longName
             else:
                 subnet.shortName = subnet.shortName[0]+":"+subnet.shortName[1]
         if "cidr" not in jsonSubnet["properties"]:
-            eprint("missing cidr in OS::Neutron::Subnet object")
+            eprint("missing cidr in OS::Neutron::Subnet object",str(jsonSubnet["resourceName"]))
             subnet.broken = True
         else:
             subnet.cidr = jsonSubnet["properties"]["cidr"]
         if "gateway_ip" not in jsonSubnet["properties"]:
-            eprint("missing gateway_ip in OS::Neutron::Subnet object")
+            eprint("missing gateway_ip in OS::Neutron::Subnet object",str(jsonSubnet["resourceName"]))
             subnet.broken = True
         else:
             subnet.gatewayIp = jsonSubnet["properties"]["gateway_ip"]
         if "network" not in jsonSubnet["properties"]:
-            eprint("missing network in OS::Neutron::Subnet object")
+            eprint("missing network in OS::Neutron::Subnet object",str(jsonSubnet["resourceName"]))
             subnet.broken = True
         elif "get_resource" not in jsonSubnet["properties"]["network"]:
-            eprint("missing get_resource in network in OS::Neutron::Subnet object")
+            eprint("missing get_resource in network in OS::Neutron::Subnet object",str(jsonSubnet["resourceName"]))
             subnet.broken = True
         else:
             subnet.netIdx = findNetIdxByName(nets,jsonSubnet["properties"]["network"]["get_resource"])
             if subnet.netIdx == None:
-                eprint("Net",jsonSubnet["properties"]["network"]["get_resource"],"for OS::Neutron::Subnet object",subnet.shortName,"not found")
+                eprint("Net",jsonSubnet["properties"]["network"]["get_resource"],"for OS::Neutron::Subnet object",subnet.shortName,"not found",str(jsonSubnet["resourceName"]))
                 subnet.broken = True
     dotSubnets.append(subnet)
 
 for idx,jsonRouter in enumerate(routers):
     router = Router(idx,longName="router"+str(idx),shortName="router"+str(idx))
     if "properties" not in jsonRouter:
-        eprint("missing properties in OS::Neutron::Router object")
+        eprint("missing properties in OS::Neutron::Router object",str(jsonRouter["resourceName"]))
         router.broken = True
     else:
         if "name" not in jsonRouter["properties"]:
-            eprint("missing name in OS::Neutron::Router object")
+            eprint("missing name in OS::Neutron::Router object",str(jsonRouter["resourceName"]))
             router.broken = True
         else:
             router.longName = jsonRouter["properties"]["name"]
             router.shortName = router.longName.split(":")
             if len(router.shortName)<2:
-                eprint("Name of OS::Neutron::Router object unexpected")
+                eprint("Name of OS::Neutron::Router object unexpected",str(jsonRouter["resourceName"]))
                 eprint("  use full name instead:",router.longName)
                 router.shortName = router.longName
             else:
@@ -383,56 +383,56 @@ for idx,jsonRouterInterface in enumerate(routerinterfaces):
     routerInterface = RouterInterface(idx,longName="ri"+str(idx),shortName="ri"+str(idx))
     routerInterface.longName = jsonRouterInterface["resourceName"]
     routerInterface.shortName = routerInterface.longName.split(":")
-    if len(routerInterface.shortName)<2:
-        eprint("Unexpected resource name of OS::Neutron::RouterInterface object.")
+    if len(routerInterface.shortName)<3:
+        eprint("Unexpected resource name of OS::Neutron::RouterInterface object.",str(jsonRouterInterface["resourceName"]))
         eprint("  use long name: ",routerInterface.longName)
         routerInterface.shortName = routerInterface.longName
     else:
-        routerInterface.shortName = routerInterface.shortName[0]+":"+routerInterface.shortName[1]
+        routerInterface.shortName = routerInterface.shortName[0]+":"+routerInterface.shortName[1]+":"+routerInterface.shortName[2]
     if "properties" not in jsonRouterInterface:
-        eprint("missing properties in OS::Neutron::RouterInterface object")
+        eprint("missing properties in OS::Neutron::RouterInterface object",str(jsonRouterInterface["resourceName"]))
         routerInterface.broken = True
     else:
         if "router" not in jsonRouterInterface["properties"]:
-            eprint("missing router in OS::Neutron::RouterInterface object")
+            eprint("missing router in OS::Neutron::RouterInterface object",str(jsonRouterInterface["resourceName"]))
             routerInterface.broken = True
         elif "get_resource" not in jsonRouterInterface["properties"]["router"]:
-            eprint("missing get_resource in router in OS::Neutron::RouterInterface object")
+            eprint("missing get_resource in router in OS::Neutron::RouterInterface object",str(jsonRouterInterface["resourceName"]))
             routerInterface.broken = True
         else:
             routerInterface.routerIdx = findRouterIdxByName(routers,jsonRouterInterface["properties"]["router"]["get_resource"])
             if routerInterface.routerIdx == None:
-                eprint("Router",jsonRouterInterface["properties"]["router"]["get_resource"],"for OS::Neutron::RouterInterface object not found")
+                eprint("Router",jsonRouterInterface["properties"]["router"]["get_resource"],"for OS::Neutron::RouterInterface object not found",str(jsonRouterInterface["resourceName"]))
                 routerInterface.broken = True
         if "subnet" not in jsonRouterInterface["properties"]:
-            eprint("missing subnet in OS::Neutron::RouterInterface object")
+            eprint("missing subnet in OS::Neutron::RouterInterface object",str(jsonRouterInterface["resourceName"]))
             routerInterface.broken = True
         elif "get_resource" not in jsonRouterInterface["properties"]["subnet"]:
-            eprint("missing get_resource in subnet in OS::Neutron::RouterInterface object")
+            eprint("missing get_resource in subnet in OS::Neutron::RouterInterface object",str(jsonRouterInterface["resourceName"]))
             routerInterface.broken = True
         else:
             routerInterface.subnetIdx = findSubnetIdxByName(subnets,jsonRouterInterface["properties"]["subnet"]["get_resource"])
             if routerInterface.subnetIdx == None:
-                eprint("Subnet",jsonRouterInterface["properties"]["subnet"]["get_resource"],"for OS::Neutron::RouterInterface object not found")
+                eprint("Subnet",jsonRouterInterface["properties"]["subnet"]["get_resource"],"for OS::Neutron::RouterInterface object not found",str(jsonRouterInterface["resourceName"]))
                 routerInterface.broken = True
     dotRouterinterfaces.append(routerInterface)
 
 for idx,jsonFloating in enumerate(floatings):
     floating = FloatingIP(idx,longName="fip"+str(idx),shortName="fip"+str(idx))
     if "properties" not in jsonFloating:
-        eprint("missing properties in OS::Neutron::FloatingIP object")
+        eprint("missing properties in OS::Neutron::FloatingIP object",str(jsonFloating["resourceName"]))
         floating.broken = True
     else:
         if "port_id" not in jsonFloating["properties"]:
-            eprint("missing port_id in OS::Neutron::FloatingIP object")
+            eprint("missing port_id in OS::Neutron::FloatingIP object",str(jsonFloating["resourceName"]))
             floating.broken = True
         elif "get_resource" not in jsonFloating["properties"]["port_id"]:
-            eprint("missing get_resource in port_id in OS::Neutron::FloatingIP object")
+            eprint("missing get_resource in port_id in OS::Neutron::FloatingIP object",str(jsonFloating["resourceName"]))
             floating.broken = True
         else:
             floating.portIdx = findPortIdxByName(ports,jsonFloating["properties"]["port_id"]["get_resource"])
             if floating.portIdx == None:
-                eprint("Port",jsonFloating["properties"]["port_id"]["get_resource"],"for OS::Neutron::FloatingIP object not found")
+                eprint("Port",jsonFloating["properties"]["port_id"]["get_resource"],"for OS::Neutron::FloatingIP object not found",str(jsonFloating["resourceName"]))
                 floating.broken = True
     dotFloatings.append(floating)
 
